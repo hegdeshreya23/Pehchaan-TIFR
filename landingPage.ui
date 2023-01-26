@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>962</width>
+    <height>730</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+	 <widget class="QPushButton" name="browse_button">
+		 <property name="geometry">
+			 <rect>
+				 <x>630</x>
+				 <y>410</y>
+				 <width>171</width>
+				 <height>51</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <family>Sitka</family>
+				 <pointsize>14</pointsize>
+			 </font>
+		 </property>
+		 <property name="styleSheet">
+			 <string notr="true">
+				 background-color: rgba(243, 224, 255,1);
+				 background-color: rgba(255, 255, 255,1);
+				 color: rgb(0,0,0);
+				 border-radius: 10px;
+				 border:1px solid rgb(188, 193, 255);
+			 </string>
+		 </property>
+		 <property name="text">
+			 <string>Browse</string>
+		 </property>
+	 </widget>
+	 <widget class="QPushButton" name="open_button">
+		 <property name="geometry">
+			 <rect>
+				 <x>380</x>
+				 <y>540</y>
+				 <width>181</width>
+				 <height>51</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <family>Sitka</family>
+				 <pointsize>14</pointsize>
+			 </font>
+		 </property>
+		 <property name="styleSheet">
+			 <string notr="true">
+				 background-color: rgba(255, 255, 255,1);
+				 color: rgb(0,0,0);
+				 border-radius: 10px;
+				 border:1px solid rgb(188, 193, 255);
+			 </string>
+		 </property>
+		 <property name="text">
+			 <string>Open</string>
+		 </property>
+	 </widget>
+
+	 <widget class="QWidget" name="bg" native="true">
+   <property name="geometry">
+    <rect>
+     <x>-30</x>
+     <y>0</y>
+     <width>1001</width>
+     <height>731</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Sitka</family>
+     <pointsize>24</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: qlineargradient(spread:pad, x1:0.968, y1:0.948864, x2:0.884211, y2:0.228, stop:0 rgba(33, 39, 68, 0.8) stop:1 rgba(0, 35, 65, 0.7));</string>
+   </property>
+   <widget class="QLabel" name="tifr_logo">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>80</y>
+      <width>208</width>
+      <height>92</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Sitka</family>
+      <pointsize>24</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>tifr_logo.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="vesit_logo">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>70</y>
+      <width>87</width>
+      <height>120</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Sitka</family>
+      <pointsize>24</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>vesit_logo.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="browse_line">
+		  <property name="geometry">
+			  <rect>
+				  <x>110</x>
+				  <y>410</y>
+				  <width>481</width>
+				  <height>51</height>
+			  </rect>
+		  </property>
+		  <property name="font">
+			  <font>
+				  <family>Sitka</family>
+				  <pointsize>12</pointsize>
+			  </font>
+		  </property>
+		  <property name="styleSheet">
+			  <string notr="true">
+				  background-color: rgba(255, 255, 255, 1);
+				  color: rgb(0, 0, 0);
+
+				  border-radius: 10px;
+				  border:1px solid rgb(188, 193, 255);
+			  </string>
+		  </property>
+		  <property name="text">
+			  <string/>
+		  </property>
+		  <property name="alignment">
+			  <set>Qt::AlignCenter</set>
+		  </property>
+		  <property name="placeholderText">
+			  <string>Type Filename</string>
+		  </property>
+	  </widget>
+
+    <widget class="QLabel" name="title">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>250</y>
+      <width>751</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Sitka</family>
+      <pointsize>24</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(6, 6, 6, 0);</string>
+    </property>
+    <property name="text">
+     <string>FACE DETECTION AND RECOGNITION</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
+    </property>
+   </widget>
+  </widget>
+	 <zorder>browse_button</zorder>
+	 <zorder>open_button</zorder>
+	 
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
