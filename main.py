@@ -188,11 +188,11 @@ class Worker3(QThread):
             ret, frame = video_auth.read()
             if ret:
                 img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                scale_percent = 40
-                width = int(img.shape[1] * scale_percent / 100)
-                height = int(img.shape[0] * scale_percent / 100)
-                dim = (width, height)
-                img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+                # scale_percent = 40
+                # width = int(img.shape[1] * scale_percent / 100)
+                # height = int(img.shape[0] * scale_percent / 100)
+                # dim = (width, height)
+                # img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
                 images = [img]
 
                 # Images of the group members
@@ -247,7 +247,7 @@ class Worker3(QThread):
                     faceLocation = face_recognition.face_locations(images[i])
                     faceLoc = faceLocation[i]
                     cv2.rectangle(images[i], (faceLoc[3], faceLoc[0]), (faceLoc[1], faceLoc[2]), (255, 0, 0), 2)
-                    cv2.putText(images[i], f'{name[j]}', (faceLoc[3], faceLoc[2] + 25), cv2.FONT_HERSHEY_COMPLEX, 0.5,
+                    cv2.putText(images[i], f'{name}', (faceLoc[3], faceLoc[2] + 25), cv2.FONT_HERSHEY_COMPLEX, 0.5,
                                 (255, 0, 0), 1)
 
                 # print(time.time() - start_time)
