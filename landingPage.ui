@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>962</width>
-    <height>730</height>
+    <width>630</width>
+    <height>530</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,7 +65,7 @@
 			 </string>
 		 </property>
 		 <property name="text">
-			 <string>Open</string>
+			 <string>Submit</string>
 		 </property>
 	 </widget>
 
@@ -85,9 +85,6 @@
      <weight>75</weight>
      <bold>true</bold>
     </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: qlineargradient(spread:pad, x1:0.968, y1:0.948864, x2:0.884211, y2:0.228, stop:0 rgba(33, 39, 68, 0.8) stop:1 rgba(0, 35, 65, 0.7));</string>
    </property>
    <widget class="QLabel" name="tifr_logo">
     <property name="geometry">
@@ -143,7 +140,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="browse_line">
+   <widget class="QLineEdit" name="image_url_text">
 		  <property name="geometry">
 			  <rect>
 				  <x>110</x>
@@ -177,6 +174,40 @@
 			  <string>Type Filename</string>
 		  </property>
 	  </widget>
+      <widget class="QLineEdit" name="name_text">
+		  <property name="geometry">
+			  <rect>
+				  <x>110</x>
+				  <y>330</y>
+				  <width>481</width>
+				  <height>51</height>
+			  </rect>
+		  </property>
+		  <property name="font">
+			  <font>
+				  <family>Sitka</family>
+				  <pointsize>12</pointsize>
+			  </font>
+		  </property>
+		  <property name="styleSheet">
+			  <string notr="true">
+				  background-color: rgba(255, 255, 255, 1);
+				  color: rgb(0, 0, 0);
+
+				  border-radius: 10px;
+				  border:1px solid rgb(188, 193, 255);
+			  </string>
+		  </property>
+		  <property name="text">
+			  <string/>
+		  </property>
+		  <property name="alignment">
+			  <set>Qt::AlignCenter</set>
+		  </property>
+		  <property name="placeholderText">
+			  <string>Name</string>
+		  </property>
+	  </widget>
 
     <widget class="QLabel" name="title">
     <property name="geometry">
@@ -199,7 +230,7 @@
      <string notr="true">background-color: rgba(6, 6, 6, 0);</string>
     </property>
     <property name="text">
-     <string>FACE DETECTION AND RECOGNITION</string>
+     <string>ADD NEW USER</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignHCenter|Qt::AlignTop</set>

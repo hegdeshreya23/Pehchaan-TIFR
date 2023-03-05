@@ -3,7 +3,7 @@ import sys, os
 
 import numpy as np
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog
+from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog, QMainWindow
 from PyQt5.uic import loadUi
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -23,6 +23,7 @@ from speaker_verification.deep_speaker.audio import NUM_FRAMES, SAMPLE_RATE, rea
 filename = ""
 admin_verified = False
 admin = "user"
+new_user = "user"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -212,15 +213,6 @@ class MySuccess(QDialog):
                 self.label1.setText('not verified')
         # self.label.setText('no')
 
-    # def save(self):
-    #     if len(self.audio) != 0:
-    #         file_name = 'rec_audio'+str(self.save_num)+'.wav'
-    #         wavfile.write(file_name, self.sr, self.audio)
-    #         self.save_num += 1
-    #         self.label.setText(str(self.save_num)+'_SAVE')
-    #     else:
-    #         self.label.setText('None')
-
 
 class MyAlert(QDialog):
     def __init__(self):
@@ -232,18 +224,153 @@ class MyAlert(QDialog):
         self.close()
 
 
+class MySuccess(QDialog):
+    def __init__(self):
+        super().__init__()
+        loadUi("successpop.ui", self)
+        self.ok_btn.clicked.connect(self.goto_last_pg)
+
+    def goto_last_pg(self):
+        self.close()
+
+class Enroll(QDialog):
+    def __init__(self):
+        super().__init__()
+        loadUi("landingPage.ui", self)
+        self.browse_button.clicked.connect(self.browsefiles)
+        self.open_button.clicked.connect(self.goto_insert_user)
+
+    def browsefiles(self):
+        fname = QFileDialog.getOpenFileName(self, 'Open file', BASE_DIR, 'Images (*.png *.jpeg *.xmp *.PNG *.jpg)')
+        if fname[0]:
+            self.image_url_text.setText(fname[0])
+        else:
+            self.goto_alert("No file selected")
+
+    def goto_alert(self, message):
+        self.w = MyAlert()
+        self.w.label.setText(message)
+        self.w.show()
+    
+    def record(self):
+        self.w = Record()
+        self.w.show()
+
+    def goto_insert_user(self):
+        self.user_name = self.name_text.text()
+        self.user_photo_url = self.image_url_text.text()
+        image = face_recognition.load_image_file(self.user_photo_url)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        if (len(face_recognition.face_locations(image)) > 1):
+            self.goto_alert("Upload an individual image")
+            return
+        elif (len(face_recognition.face_locations(image)) == 0):
+            self.goto_alert("Upload an image of your face")
+            return
+        try:
+            with open(os.path.join(BASE_DIR, 'new_encodings.dat'), 'rb') as f:
+                all_face_encodings = pickle.load(f)
+        except:
+            all_face_encodings = {}
+        all_face_encodings[self.user_name] = [face_recognition.face_encodings(image)[0]]
+        with open(os.path.join(BASE_DIR, 'new_encodings.dat'), 'wb') as f:
+            pickle.dump(all_face_encodings, f)
+    
+        global new_user
+        new_user = self.user_name
+        self.record()
+        self.name_text.setText("")
+        self.image_url_text.setText("")
+
+class Record(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        loadUi("record.ui", self)
+        self.input_device = sd.query_devices(kind='input')
+        self.rec = 1
+        self.audio = np.array([])
+        self.time = 0
+        self.sr = 44100
+        self.max_duration = 600
+        self.ch = 1
+        self.save_num = 0
+        self.enroll.clicked.connect(self.goto_enroll)
+        self.start.clicked.connect(self.goto_start)
+        self.stop.clicked.connect(self.goto_stop)
+    
+    def goto_enroll(self):
+        if self.rec == "saved":
+            try:
+                with open(os.path.join(BASE_DIR, 'audio_encodings.dat'), 'rb') as f:
+                    audio_encodings = pickle.load(f)
+            except:
+                audio_encodings = {}
+            mfcc = sample_from_mfcc(read_mfcc("D:/tifr pehchaan/"+file_name, SAMPLE_RATE), NUM_FRAMES)
+            global new_user
+            audio_encodings[new_user] = mfcc    
+            with open(os.path.join(BASE_DIR, 'audio_encodings.dat'), 'wb') as f:
+                pickle.dump(audio_encodings, f)
+            self.rec = "enrolled"
+            self.success("Person successfully inserted")
+        else:
+            self.goto_alert("Please record the audio")
+            return
+
+
+    def goto_start(self):
+        self.audio = sd.rec(frames=self.max_duration*self.sr, samplerate=self.sr, channels=self.ch, dtype='float32',
+                            device=self.input_device['name'])
+        self.time = time.time()
+        self.rec = "rec"
+
+    def goto_stop(self):
+        sd.stop()
+        if self.rec == 'rec':
+            s_time = time.time() - self.time
+            self.audio = self.audio[:int(round(s_time, 0)*self.sr)]
+            global file_name
+            file_name = 'rec_audio'+str(self.save_num)+'.wav'
+            wavfile.write(file_name, self.sr, self.audio)
+            print(file_name)
+            self.rec = "saved"
+
+    def success(self, message):
+        self.w = MySuccess()
+        self.w.label.setText(message)
+        self.w.show()
+
+    def goto_alert(self, message):
+        self.w = MyAlert()
+        self.w.label.setText(message)
+        self.w.show()
+
+
+class LandingPage(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        loadUi("gui.ui", self)
+        self.enroll.clicked.connect(self.goto_enroll)
+        self.attend.clicked.connect(self.goto_attend)
+
+    def goto_enroll(self):
+        enroll = Enroll()
+        widget.addWidget(enroll)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def goto_attend(self):
+        attend = MySAdminLogin()
+        widget.addWidget(attend)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+        
 app = QApplication(sys.argv)
 
 widget = QtWidgets.QStackedWidget()
 
-landingpage = MySAdminLogin()
+landingpage = LandingPage()
 widget.addWidget(landingpage)
 widget.setFixedWidth(962)
 widget.setFixedHeight(730)
 widget.show()
 sys.exit(app.exec_())
 
-# if path is empty display msg
-# bg set
-# grayscale
-# disable text writing in labels
