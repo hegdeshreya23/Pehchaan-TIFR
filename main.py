@@ -10,7 +10,17 @@ from PyQt5.QtGui import *
 from PIL import Image
 import cv2
 import face_recognition
+from essential_generators import DocumentGenerator
 
+from threading import Timer
+from scipy.io import wavfile
+import sounddevice as sd
+import time
+import pickle
+from speaker_verification.model_evaluation import run_user_evaluation
+from speaker_verification.deep_speaker.audio import NUM_FRAMES, SAMPLE_RATE, read_mfcc, sample_from_mfcc
+
+filename = ""
 admin_verified = False
 admin = "user"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +47,13 @@ class MySAdminLogin(QDialog):
         global admin_verified
         self.ok_btn.setEnabled(True)
         if admin_verified:
-            self.success("Welcome "+ str(admin))
+            gen = DocumentGenerator()
+            input_str = gen.sentence()
+            print(input_str)
+            result_list = input_str.split()[:9]
+            phrase = " ".join(result_list)
+            rstr = "Welcome "+ str(admin)+"\n \n"+ "Please say this phrase: \n"+phrase
+            self.success(rstr)
         # self.close()
 
         else:
@@ -93,15 +109,14 @@ class Worker3(QThread):
                 check_frame = True
                 while self.ThreadActive:
                     try:
+                        # video_work = cv2.VideoCapture('')
                         video_work = cv2.VideoCapture(0)
                         ret, frame = video_work.read()
                         Image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                        # Image = cv2.resize(frame, (0, 0), fx=0.45, fy=0.45)
-                        # Image = cv2.cvtColor(Image, cv2.COLOR_BGR2RGB)
-                        # Image = Image[:, :, ::-1]
+                        
                         if check_frame:
                             face_locations = face_recognition.face_locations(Image)
-                            print(face_locations)
+                            
                             if (len(face_locations) > 0):
                                 face_encodings = face_recognition.face_encodings(Image, face_locations)
                                 for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
@@ -109,9 +124,7 @@ class Worker3(QThread):
                                     matches = face_recognition.compare_faces(known_face_encodings, face_encoding,
                                                                              tolerance=0.45)
                                     if True in matches:
-                                        print('matched')
                                         name = face_ids[matches.index(True)]
-                                        print(name)
                                         cv2.rectangle(Image, (left, top), (right, bottom), (0, 255, 0), 1)
                                         y = top - 15 if top - 15 > 15 else top + 15
                                         cv2.putText(Image, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
@@ -150,10 +163,63 @@ class MySuccess(QDialog):
     def __init__(self):
         super().__init__()
         loadUi("successful.ui", self)
-        self.ok_btn.clicked.connect(self.goto_last_pg)
+        #self.ok_btn.clicked.connect(self.goto_last_pg)
+        self.sr = 44100
+        self.max_duration = 600
+        self.ch = 1
+        self.save_num = 0
+        self.audio = np.array([])
+        self.input_device = sd.query_devices(kind='input')
+        self.output_device = sd.query_devices(kind='output')
+        self.time = 0
+        self.status = 0
+        self.rec()
+        t = Timer(5, self.stop)
+        t.start()
 
-    def goto_last_pg(self):
-        self.close()
+    def rec(self):
+        self.audio = sd.rec(frames=self.max_duration*self.sr, samplerate=self.sr, channels=self.ch, dtype='float32',
+                            device=self.input_device['name'])
+        self.time = time.time()
+        self.status = 'rec'
+        self.label1.setText('REC')
+
+    def stop(self):
+        sd.stop()
+        if self.status == 'rec':
+            s_time = time.time() - self.time
+            self.audio = self.audio[:int(round(s_time, 0)*self.sr)]
+            global file_name
+            file_name = 'rec_audio'+str(self.save_num)+'.wav'
+            wavfile.write(file_name, self.sr, self.audio)
+            print(file_name)
+            self.status = 'stop'
+            self.label1.setText('stop')
+            try:
+                with open(os.path.join(BASE_DIR, 'audio_encodings.dat'), 'rb') as f:
+                    audio_encodings = pickle.load(f)
+            except:
+                audio_encodings = {}
+            global admin
+            print(admin)
+            mfcc = audio_encodings[admin]
+            score = run_user_evaluation(mfcc, file_name)
+            result = round(score[0] * 100, 2)
+            print(result)
+            if result > 55.0:
+                self.label1.setText('verified')
+            else:
+                self.label1.setText('not verified')
+        # self.label.setText('no')
+
+    # def save(self):
+    #     if len(self.audio) != 0:
+    #         file_name = 'rec_audio'+str(self.save_num)+'.wav'
+    #         wavfile.write(file_name, self.sr, self.audio)
+    #         self.save_num += 1
+    #         self.label.setText(str(self.save_num)+'_SAVE')
+    #     else:
+    #         self.label.setText('None')
 
 
 class MyAlert(QDialog):

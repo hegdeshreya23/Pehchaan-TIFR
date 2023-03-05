@@ -19,3 +19,7 @@ print(all_face_encodings)
 #     pickle.dump(all_face_encodings, f)
 
 #print(face_recognition.face_encodings(image)[0])
+
+
+# tensorflow-intel==2.11.0
+# tensorflow-io-gcs-filesystem==0.31.0

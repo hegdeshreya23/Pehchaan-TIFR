@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
-     <height>400</height>
+     <width>800</width>
+     <height>600</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -42,15 +42,15 @@
         <widget class="QLabel" name="label_2">
          <property name="maximumSize">
           <size>
-           <width>150</width>
-           <height>16777215</height>
+           <width>60</width>
+           <height>107</height>
           </size>
          </property>
          <property name="text">
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>../GUI_images/success.png</pixmap>
+          <pixmap>image.png</pixmap>
          </property>
         </widget>
        </item>
@@ -71,7 +71,7 @@
          <property name="font">
           <font>
            <family>Lucida Sans</family>
-           <pointsize>16</pointsize>
+           <pointsize>14</pointsize>
           </font>
          </property>
          <property name="text">
@@ -94,46 +94,31 @@
        </size>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
        <item>
-        <widget class="QPushButton" name="ok_btn">
-         <property name="maximumSize">
+        <widget class="QLabel" name="label1">
+         <property name="minimumSize">
           <size>
            <width>200</width>
-           <height>80</height>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>400</width>
+           <height>100</height>
           </size>
          </property>
          <property name="font">
           <font>
            <family>Lucida Sans</family>
-           <pointsize>14</pointsize>
+           <pointsize>20</pointsize>
           </font>
          </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">height: 76px;
-background: #102D60;
-color: #ffffff;
-border-radius: 5px;</string>
-         </property>
          <property name="text">
-          <string>Okay</string>
+          <string>Start</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
