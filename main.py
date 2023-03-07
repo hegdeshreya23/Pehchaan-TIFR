@@ -1,6 +1,8 @@
 import pickle
 import sys, os
 
+import urllib
+
 import numpy as np
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog, QMainWindow
@@ -11,7 +13,7 @@ from PIL import Image
 import cv2
 import face_recognition
 from essential_generators import DocumentGenerator
-
+from PyQt5.QtCore import QTimer
 from threading import Timer
 from scipy.io import wavfile
 import sounddevice as sd
@@ -25,7 +27,7 @@ admin_verified = False
 admin = "user"
 new_user = "user"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
+# url = 'http://192.168.175.152/cam-hi.jpg'
 
 class MySAdminLogin(QDialog):
     def __init__(self):
@@ -47,11 +49,12 @@ class MySAdminLogin(QDialog):
     def verify(self):
         global admin_verified
         self.ok_btn.setEnabled(True)
+        # admin_verified = True
         if admin_verified:
             gen = DocumentGenerator()
             input_str = gen.sentence()
             print(input_str)
-            result_list = input_str.split()[:9]
+            result_list = input_str.split()[:12]
             phrase = " ".join(result_list)
             rstr = "Welcome "+ str(admin)+"\n \n"+ "Please say this phrase: \n"+phrase
             self.success(rstr)
@@ -63,8 +66,9 @@ class MySAdminLogin(QDialog):
             cv2.destroyAllWindows()
 
     def success(self, message):
-        self.w = MySuccess()
+        self.w = MyVoice()
         self.w.label.setText(message)
+        self.w.label.setWordWrap(True)
         self.w.setWindowTitle("UpAIsthiti")
         self.w.show()
 
@@ -82,10 +86,19 @@ class Worker3(QThread):
         global attendance_entry, id_name_mapping, id_status_mapping
         self.ThreadActive = True
         global video_auth
+        # for webcam
         video_auth = cv2.VideoCapture(0)
+        # for esp32
+        # imgResp=urllib.request.urlopen(url)
+
         while self.ThreadActive:
             # start_time = time.time()
+            # for webcam
             ret, frame = video_auth.read()
+            # for esp32
+            # imgNp = np.array(bytearray(imgResp.read()),dtype=np.uint8)
+            # frame = cv2.imdecode(imgNp,-1)
+            # ret = True
             if ret:
                 img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 # scale_percent = 40
@@ -160,18 +173,18 @@ class Worker3(QThread):
         self.quit()
 
 
-class MySuccess(QDialog):
+class MyVoice(QDialog):
     def __init__(self):
         super().__init__()
         loadUi("successful.ui", self)
         #self.ok_btn.clicked.connect(self.goto_last_pg)
+        self.label1.setStyleSheet('background-color: none')
         self.sr = 44100
         self.max_duration = 600
         self.ch = 1
         self.save_num = 0
         self.audio = np.array([])
         self.input_device = sd.query_devices(kind='input')
-        self.output_device = sd.query_devices(kind='output')
         self.time = 0
         self.status = 0
         self.rec()
@@ -184,6 +197,18 @@ class MySuccess(QDialog):
         self.time = time.time()
         self.status = 'rec'
         self.label1.setText('REC')
+        self.label1.setStyleSheet('background-color: orange; font-size: 40px')
+    #     self.flag = True
+    #     timer = QTimer(self, interval=500)
+    #     timer.timeout.connect(self.flashing)
+    #     timer.start()
+
+    # def flashing(self):
+    #     if self.flag:
+    #         self.label1.setStyleSheet('background-color: none; font-size: 40px')
+    #     else:
+    #         self.label1.setStyleSheet('background-color: orange; font-size: 40px')
+    #     self.flag = not self.flag
 
     def stop(self):
         sd.stop()
@@ -193,9 +218,9 @@ class MySuccess(QDialog):
             global file_name
             file_name = 'rec_audio'+str(self.save_num)+'.wav'
             wavfile.write(file_name, self.sr, self.audio)
-            print(file_name)
             self.status = 'stop'
-            self.label1.setText('stop')
+            self.label1.setText('STOP')
+            self.label1.setStyleSheet('background-color: none; font-size: 40px')
             try:
                 with open(os.path.join(BASE_DIR, 'audio_encodings.dat'), 'rb') as f:
                     audio_encodings = pickle.load(f)
@@ -211,6 +236,7 @@ class MySuccess(QDialog):
                 self.label1.setText('verified')
             else:
                 self.label1.setText('not verified')
+            
         # self.label.setText('no')
 
 
@@ -313,17 +339,19 @@ class Record(QMainWindow):
             self.rec = "enrolled"
             self.success("Person successfully inserted")
         else:
-            self.goto_alert("Please record the audio")
+            self.goto_alert("Please record audio again")
             return
 
 
     def goto_start(self):
+        self.start.setStyleSheet('background-color: orange')
         self.audio = sd.rec(frames=self.max_duration*self.sr, samplerate=self.sr, channels=self.ch, dtype='float32',
                             device=self.input_device['name'])
         self.time = time.time()
         self.rec = "rec"
 
     def goto_stop(self):
+        self.start.setStyleSheet('background-color: none')
         sd.stop()
         if self.rec == 'rec':
             s_time = time.time() - self.time

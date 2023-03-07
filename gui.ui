@@ -6,40 +6,172 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>200</height>
+    <width>630</width>
+    <height>530</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Pehchaan</string>
   </property>
-  
-  <widget class="QPushButton" name="enroll">
+	 <widget class="QPushButton" name="attend">
+		 <property name="geometry">
+			 <rect>
+				 <x>580</x>
+				 <y>410</y>
+				 <width>191</width>
+				 <height>51</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <family>Sitka</family>
+				 <pointsize>14</pointsize>
+			 </font>
+		 </property>
+		 <property name="styleSheet">
+			 <string notr="true">
+				 background-color: rgba(243, 224, 255,1);
+				 background-color: rgba(255, 255, 255,1);
+				 color: rgb(0,0,0);
+				 border-radius: 10px;
+				 border:1px solid rgb(188, 193, 255);
+			 </string>
+		 </property>
+		 <property name="text">
+			 <string>Mark attendance</string>
+		 </property>
+	 </widget>
+	 <widget class="QPushButton" name="enroll">
+		 <property name="geometry">
+			 <rect>
+				 <x>220</x>
+				 <y>410</y>
+				 <width>200</width>
+				 <height>51</height>
+			 </rect>
+		 </property>
+		 <property name="font">
+			 <font>
+				 <family>Sitka</family>
+				 <pointsize>14</pointsize>
+			 </font>
+		 </property>
+		 <property name="styleSheet">
+			 <string notr="true">
+				 background-color: rgba(255, 255, 255,1);
+				 color: rgb(0,0,0);
+				 border-radius: 10px;
+				 border:1px solid rgb(188, 193, 255);
+			 </string>
+		 </property>
+		 <property name="text">
+			 <string>Enroll new student</string>
+		 </property>
+	 </widget>
+
+	 <widget class="QWidget" name="bg" native="true">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>30</y>
-     <width>93</width>
-     <height>28</height>
+     <x>-30</x>
+     <y>0</y>
+     <width>1001</width>
+     <height>731</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Enroll</string>
+   <property name="font">
+    <font>
+     <family>Sitka</family>
+     <pointsize>24</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
+   <widget class="QLabel" name="tifr_logo">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>80</y>
+      <width>208</width>
+      <height>92</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Sitka</family>
+      <pointsize>24</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>tifr_logo.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="vesit_logo">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>70</y>
+      <width>87</width>
+      <height>120</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Sitka</family>
+      <pointsize>24</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>vesit_logo.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   
+    <widget class="QLabel" name="title">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>250</y>
+      <width>751</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Sitka</family>
+      <pointsize>28</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(6, 6, 6, 0);</string>
+    </property>
+    <property name="text">
+     <string>PEHCHAAN</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignHCenter|Qt::AlignTop</set>
+    </property>
+   </widget>
   </widget>
-  <widget class="QPushButton" name="attend">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>30</y>
-     <width>93</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Attendance</string>
-   </property>
-  </widget>
+	 <zorder>enroll</zorder>
+	 <zorder>attend</zorder>
+	 
  </widget>
  <resources/>
  <connections/>
