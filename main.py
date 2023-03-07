@@ -1,6 +1,11 @@
 import pickle
 import sys, os
 
+import pyaudio
+import socket
+import threading
+import wave
+
 import urllib
 
 import numpy as np
@@ -27,7 +32,8 @@ admin_verified = False
 admin = "user"
 new_user = "user"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# url = 'http://192.168.175.152/cam-hi.jpg'
+# url_cam = 'http://192.168.175.152/cam-hi.jpg'
+url_mic = '192.168.0.161'
 
 class MySAdminLogin(QDialog):
     def __init__(self):
@@ -89,7 +95,7 @@ class Worker3(QThread):
         # for webcam
         video_auth = cv2.VideoCapture(0)
         # for esp32
-        # imgResp=urllib.request.urlopen(url)
+        # imgResp=urllib.request.urlopen(url_cam)
 
         while self.ThreadActive:
             # start_time = time.time()
@@ -190,6 +196,39 @@ class MyVoice(QDialog):
         self.rec()
         t = Timer(5, self.stop)
         t.start()
+
+    def read_audio_from_socket(self):
+        global buffering, buffer, buffer_audio
+        # connect to the esp32 socket
+        sock = socket.socket()
+        sock.connect((url_mic, 1234))
+        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        while buffer_audio:
+            data = sock.recv(4096)
+            if data == b"":
+                raise RuntimeError("Lost connection")
+            buffer.append(data)
+            if len(buffer) > 50 and buffering:
+                print("Finished buffering")
+                buffering = False
+
+    def save_esp(self):
+        global buffer, buffering, buffer_audio
+        # initiaslise pyaudio
+        p = pyaudio.PyAudio()
+        # kick off the audio buffering thread
+        thread = threading.Thread(target=self.read_audio_from_socket(self))
+        thread.daemon = True
+        thread.start()
+        if True:
+            input("Recording to output.wav - hit any key to stop")
+            buffer_audio = False
+            # write the buffered audio to a wave file
+            with wave.open("output.wav", "wb") as wave_file:
+                wave_file.setnchannels(1)
+                wave_file.setsampwidth(p.get_sample_size(pyaudio.paInt16))
+                wave_file.setframerate(16000)
+                wave_file.writeframes(b"".join(buffer))
 
     def rec(self):
         self.audio = sd.rec(frames=self.max_duration*self.sr, samplerate=self.sr, channels=self.ch, dtype='float32',
