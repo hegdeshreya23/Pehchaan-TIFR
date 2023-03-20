@@ -32,7 +32,7 @@ admin_verified = False
 admin = "user"
 new_user = "user"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# url_cam = 'http://192.168.175.152/cam-hi.jpg'
+# url_cam = 'http://192.168.176.152/cam-hi.jpg'
 url_mic = '192.168.0.161'
 
 class MySAdminLogin(QDialog):
