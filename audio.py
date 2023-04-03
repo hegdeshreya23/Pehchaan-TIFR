@@ -1,50 +1,28 @@
-
-import pyaudio
 import socket
-import threading
+import time
 import wave
 
-buffer = []
-buffering = False
-buffer_audio = True
+HOST = '172.20.10.2'
+PORT = 1234
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((HOST, PORT))
 
-url_mic = '192.168.176.39'
+data = b''
+elapsed = 0
+seconds = 8
+start = time.time()
+while True:
+    elapsed = time.time() - start
+    print(elapsed)
+    chunk = sock.recv(4096)
+    if not chunk:
+        break
+    elif elapsed > seconds:
+        break
+    data += chunk
 
-def read_audio_from_socket():
-    global buffering, buffer, buffer_audio
-    # connect to the esp32 socket
-    sock = socket.socket()
-    sock.connect((url_mic, 1234))
-    sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-    while buffer_audio:
-        data = sock.recv(4096)
-        if data == b"":
-            raise RuntimeError("Lost connection")
-        buffer.append(data)
-        if len(buffer) > 50 and buffering:
-            print("Finished buffering")
-            buffering = False
-
-
-def save_esp():
-    global buffer, buffering, buffer_audio
-    # initiaslise pyaudio
-    p = pyaudio.PyAudio()
-    # kick off the audio buffering thread
-    thread = threading.Thread(target=read_audio_from_socket())
-    thread.daemon = True
-    thread.start()
-    if True:
-        input("Recording to output.wav - hit any key to stop")
-        buffer_audio = False
-        # write the buffered audio to a wave file
-        with wave.open("output.wav", "wb") as wave_file:
-            wave_file.setnchannels(1)
-            wave_file.setsampwidth(p.get_sample_size(pyaudio.paInt16))
-            wave_file.setframerate(16000)
-            wave_file.writeframes(b"".join(buffer))
-
-
-
-if __name__ == "__main__":
-    save_esp()
+with wave.open('audio.wav', 'wb') as wavfile:
+    wavfile.setnchannels(1)
+    wavfile.setsampwidth(2)
+    wavfile.setframerate(16000)
+    wavfile.writeframes(data)

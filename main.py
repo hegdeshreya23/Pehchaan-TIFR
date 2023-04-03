@@ -32,8 +32,13 @@ admin_verified = False
 admin = "user"
 new_user = "user"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# url_cam = 'http://192.168.176.152/cam-hi.jpg'
+url_cam = 'rtsp://192.168.69.112:8554/mjpeg/1'
 url_mic = '192.168.0.161'
+HOST = '172.20.10.2'
+PORT = 1234
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((HOST, PORT))
+
 
 class MySAdminLogin(QDialog):
     def __init__(self):
@@ -93,7 +98,7 @@ class Worker3(QThread):
         self.ThreadActive = True
         global video_auth
         # for webcam
-        video_auth = cv2.VideoCapture(0)
+        video_auth = cv2.VideoCapture(url_cam)
         # for esp32
         # imgResp=urllib.request.urlopen(url_cam)
 
@@ -127,30 +132,23 @@ class Worker3(QThread):
                 print(face_ids)
                 known_face_encodings = np.array(list(value[0] for value in all_face_encodings.values()))
                 check_frame = True
-                while self.ThreadActive:
-                    try:
-                        # video_work = cv2.VideoCapture('')
-                        video_work = cv2.VideoCapture(0)
-                        ret, frame = video_work.read()
-                        Image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                        
-                        if check_frame:
-                            face_locations = face_recognition.face_locations(Image)
-                            
-                            if (len(face_locations) > 0):
-                                face_encodings = face_recognition.face_encodings(Image, face_locations)
-                                for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
-                                    # See if the face is a match for the known face(s)
-                                    matches = face_recognition.compare_faces(known_face_encodings, face_encoding,
-                                                                             tolerance=0.45)
-                                    if True in matches:
-                                        name = face_ids[matches.index(True)]
-                                        cv2.rectangle(Image, (left, top), (right, bottom), (0, 255, 0), 1)
-                                        y = top - 15 if top - 15 > 15 else top + 15
-                                        cv2.putText(Image, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-                    except:
-                        print("Error")
+                if check_frame:
+                    face_locations = face_recognition.face_locations(Image)
+
+                    if (len(face_locations) > 0):
+                        face_encodings = face_recognition.face_encodings(Image, face_locations)
+                        for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
+                            # See if the face is a match for the known face(s)
+                            matches = face_recognition.compare_faces(known_face_encodings, face_encoding,
+                                                                             tolerance=0.45)
+                            if True in matches:
+                                name = face_ids[matches.index(True)]
+                                cv2.rectangle(Image, (left, top), (right, bottom), (0, 255, 0), 1)
+                                y = top - 15 if top - 15 > 15 else top + 15
+                                cv2.putText(Image, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+
                     if name != "Unknown":
                         global admin_verified
                         admin_verified = True
@@ -198,37 +196,68 @@ class MyVoice(QDialog):
         t.start()
 
     def read_audio_from_socket(self):
-        global buffering, buffer, buffer_audio
-        # connect to the esp32 socket
-        sock = socket.socket()
-        sock.connect((url_mic, 1234))
-        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        while buffer_audio:
-            data = sock.recv(4096)
-            if data == b"":
-                raise RuntimeError("Lost connection")
-            buffer.append(data)
-            if len(buffer) > 50 and buffering:
-                print("Finished buffering")
-                buffering = False
+        data = b''
+        elapsed = 0
+        seconds = 8
+        start = time.time()
+        while True:
+            elapsed = time.time() - start
+            print(elapsed)
+            chunk = sock.recv(4096)
+            if not chunk:
+                break
+            elif elapsed > seconds:
+                break
+            data += chunk
+
+        with wave.open('audio.wav', 'wb') as wavfile:
+            wavfile.setnchannels(1)
+            wavfile.setsampwidth(2)
+            wavfile.setframerate(16000)
+            wavfile.writeframes(data)
 
     def save_esp(self):
-        global buffer, buffering, buffer_audio
-        # initiaslise pyaudio
-        p = pyaudio.PyAudio()
-        # kick off the audio buffering thread
-        thread = threading.Thread(target=self.read_audio_from_socket(self))
-        thread.daemon = True
-        thread.start()
-        if True:
-            input("Recording to output.wav - hit any key to stop")
-            buffer_audio = False
-            # write the buffered audio to a wave file
-            with wave.open("output.wav", "wb") as wave_file:
-                wave_file.setnchannels(1)
-                wave_file.setsampwidth(p.get_sample_size(pyaudio.paInt16))
-                wave_file.setframerate(16000)
-                wave_file.writeframes(b"".join(buffer))
+        data = b''
+        elapsed = 0
+        seconds = 8
+        start = time.time()
+        self.status = 'rec'
+        self.label1.setText('REC')
+        self.label1.setStyleSheet('background-color: orange; font-size: 40px')
+        while True:
+            elapsed = time.time() - start
+            print(elapsed)
+            chunk = sock.recv(4096)
+            if not chunk:
+                break
+            elif elapsed > seconds:
+                break
+            data += chunk
+
+        with wave.open('audio.wav', 'wb') as wavfile:
+            wavfile.setnchannels(1)
+            wavfile.setsampwidth(2)
+            wavfile.setframerate(16000)
+            wavfile.writeframes(data)
+
+        self.status = 'stop'
+        self.label1.setText('STOP')
+        self.label1.setStyleSheet('background-color: none; font-size: 40px')
+        try:
+            with open(os.path.join(BASE_DIR, 'audio_encodings.dat'), 'rb') as f:
+                audio_encodings = pickle.load(f)
+        except:
+            audio_encodings = {}
+        global admin
+        print(admin)
+        mfcc = audio_encodings[admin]
+        score = run_user_evaluation(mfcc, 'audio.wav')
+        result = round(score[0] * 100, 2)
+        print(result)
+        if result > 55.0:
+            self.label1.setText('verified')
+        else:
+            self.label1.setText('not verified')
 
     def rec(self):
         self.audio = sd.rec(frames=self.max_duration*self.sr, samplerate=self.sr, channels=self.ch, dtype='float32',
