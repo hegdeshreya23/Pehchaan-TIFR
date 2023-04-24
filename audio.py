@@ -2,8 +2,8 @@ import socket
 import time
 import wave
 
-HOST = '172.20.10.2'
-PORT = 1234
+HOST = '192.168.82.109'
+PORT = 1122
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((HOST, PORT))
 
