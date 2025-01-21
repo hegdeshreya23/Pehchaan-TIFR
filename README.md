@@ -2,62 +2,62 @@
 
 ## Touchless two factor authentication based Attendance System
 
-Pehchaan-TIFR is an automated face recognition-based attendance system designed for Tata Institute of Fundamental Research (TIFR). The system leverages deep learning, OpenCV, and real-time image processing to accurately identify individuals and log attendance efficiently.
+Pehchaan-TIFR is an automated face recognition-based attendance system designed for Tata Institute of Fundamental Research (TIFR).It leverages facial recognition and voice verification to automate attendance tracking, ensuring accuracy and security.
 
 ## Dataset
 
-The system is designed to work with custom face datasets collected from the institution. It processes facial images and extracts unique facial features for recognition.
+The system processes two types of biometric data:
+1️⃣ Facial Data: Images of individuals for face recognition.
+2️⃣ Voice Data: Recorded voice samples for speaker verification.
+
+The system uses a custom dataset collected from users during enrollment, extracting unique facial embeddings and voice features for authentication.
 
 ## Theory
 
-#### Facial Feature Extraction
+1️⃣ Facial Feature Extraction
+	•	Face Detection: Identify faces using Haar cascades or CNN-based models.
+	•	Feature Encoding: Extract unique facial embeddings using Dlib’s FaceNet.
+	•	Face Matching: Compare facial embeddings with stored templates using Euclidean distance.
 
-Facial recognition relies on deep learning-based feature extraction to ensure accurate identification. The process involves:
-	1.	Face Detection
-	•	Detect faces in images using Haar cascades or CNN-based models.
-	2.	Feature Encoding
-	•	Extract facial embeddings using Dlib’s FaceNet or OpenFace models.
-	3.	Face Matching
-	•	Compare new images with stored embeddings using Euclidean distance-based matching.
-
-#### Face Recognition Model
-
-The system employs a pre-trained deep learning model for facial recognition. It follows these steps:
-	1.	Train on labeled facial images to create unique feature encodings.
-	2.	Store these encodings in a database for real-time comparison.
-	3.	Identify individuals by matching new face data with stored embeddings.
-
-The model is optimized to handle variations in lighting, angles, and facial expressions.
+2️⃣ Voice Feature Extraction
+	•	Preprocessing: Remove noise and normalize audio signals.
+	•	Feature Extraction: Use Mel-Frequency Cepstral Coefficients (MFCCs) to analyze voice patterns.
+	•	Speaker Recognition: Identify individuals using a Gaussian Mixture Model (GMM) trained on voice data.
 
 #### Workflow Graph
 
-1️⃣ Image Capture  →  2️⃣ Face Detection  →  3️⃣ Feature Extraction  
-    →  4️⃣ Face Recognition  →  5️⃣ Attendance Logging  
+1️⃣ Image & Voice Capture  
+ →  2️⃣ Face & Voice Detection  
+   →  3️⃣ Feature Extraction (Facial Embeddings & MFCCs)  
+     →  4️⃣ Face & Voice Recognition  
+       →  5️⃣ Attendance Logging  
 
 ## Dependencies
 
 This project requires the following Python libraries:
-	1.	OpenCV (Face Detection & Processing)
-	2.	Dlib (Facial Feature Extraction)
-	3.	Face Recognition Library (Deep Learning-based Face Matching)
-	4.	Flask/FastAPI (Backend API)
-	5.	SQLite/MySQL (Database for attendance storage)
+	•	OpenCV (Face Detection & Processing)
+	•	Dlib (Facial Feature Extraction)
+	•	Face Recognition Library (Deep Learning-based Face Matching)
+	•	Librosa & Python Speech Features (Voice Processing & Feature Extraction)
+	•	Flask/FastAPI (Backend API)
+	•	SQLite/MySQL (Attendance Database)
 
 ## Results
 
-The system was evaluated on a dataset of 100+ individuals, achieving:
-	1.	Face Recognition Accuracy: 96.8%
-	2.	Response Time: < 1.5 seconds per face
-	3.	False Positives: < 2%
+The system was tested on a dataset of 100+ individuals, achieving:
+	•	Face Recognition Accuracy: 96.8%
+	•	Voice Recognition Accuracy: 94.5%
+	•	Response Time: < 2 seconds per user
 
 ## Installation & Usage
-	1.	Clone the repository
+
+	#### 1.	Clone the repository
 		```
 		git clone https://github.com/hegdeshreya23/Pehchaan-TIFR.git
 		cd Pehchaan-TIFR
 		```
 
-	2.	Install dependencies
+	#### 2.	Install dependencies
 		```
 		pip install -r requirements.txt
 		
@@ -67,9 +67,9 @@ The system was evaluated on a dataset of 100+ individuals, achieving:
 		python app.py
 		
 		```
-	4.	Register Faces
-	•	Upload images through the web interface.
-	•	The system extracts and stores facial encodings.
+	4.	Enroll Users (Face & Voice Registration)
+		•	Upload images and record a short speech sample.
+		•	The system extracts and stores facial embeddings & voice features.
 	5.	Start Attendance Recognition
-	•	The system captures faces via webcam and recognizes individuals.
-	•	Attendance is logged automatically.
+		•	The system captures a user’s face and voice.
+		•	If both match stored data, attendance is logged automatically.
