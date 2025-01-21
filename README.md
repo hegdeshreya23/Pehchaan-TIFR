@@ -1,16 +1,16 @@
-Pehchaan-TIFR
+## Pehchaan-TIFR
 
-Facial Recognition-based Attendance System
+## Touchless two factor authentication based Attendance System
 
 Pehchaan-TIFR is an automated face recognition-based attendance system designed for Tata Institute of Fundamental Research (TIFR). The system leverages deep learning, OpenCV, and real-time image processing to accurately identify individuals and log attendance efficiently.
 
-Dataset
+## Dataset
 
 The system is designed to work with custom face datasets collected from the institution. It processes facial images and extracts unique facial features for recognition.
 
-Theory
+#### Theory
 
-Facial Feature Extraction
+## Facial Feature Extraction
 
 Facial recognition relies on deep learning-based feature extraction to ensure accurate identification. The process involves:
 	1.	Face Detection
@@ -20,7 +20,7 @@ Facial recognition relies on deep learning-based feature extraction to ensure ac
 	3.	Face Matching
 	•	Compare new images with stored embeddings using Euclidean distance-based matching.
 
-Face Recognition Model
+## Face Recognition Model
 
 The system employs a pre-trained deep learning model for facial recognition. It follows these steps:
 	•	Train on labeled facial images to create unique feature encodings.
@@ -29,12 +29,12 @@ The system employs a pre-trained deep learning model for facial recognition. It 
 
 The model is optimized to handle variations in lighting, angles, and facial expressions.
 
-Workflow Graph
+## Workflow Graph
 
 1️⃣ Image Capture  →  2️⃣ Face Detection  →  3️⃣ Feature Extraction  
     →  4️⃣ Face Recognition  →  5️⃣ Attendance Logging  
 
-Dependencies
+## Dependencies
 
 This project requires the following Python libraries:
 	•	OpenCV (Face Detection & Processing)
@@ -43,34 +43,30 @@ This project requires the following Python libraries:
 	•	Flask/FastAPI (Backend API)
 	•	SQLite/MySQL (Database for attendance storage)
 
-Install dependencies using:
-
-pip install -r requirements.txt
-
-Results
+##Results
 
 The system was evaluated on a dataset of 100+ individuals, achieving:
 	•	Face Recognition Accuracy: 96.8%
 	•	Response Time: < 1.5 seconds per face
 	•	False Positives: < 2%
 
-Installation & Usage
+##Installation & Usage
 	1.	Clone the repository
-
-git clone https://github.com/hegdeshreya23/Pehchaan-TIFR.git
-cd Pehchaan-TIFR
-
+		```
+		git clone https://github.com/hegdeshreya23/Pehchaan-TIFR.git
+		cd Pehchaan-TIFR
+		```
 
 	2.	Install dependencies
-
-pip install -r requirements.txt
-
-
+		```
+		pip install -r requirements.txt
+		
+		```
 	3.	Run the application
-
-python app.py
-
-
+		```
+		python app.py
+		
+		```
 	4.	Register Faces
 	•	Upload images through the web interface.
 	•	The system extracts and stores facial encodings.
