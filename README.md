@@ -8,9 +8,9 @@ Pehchaan-TIFR is an automated face recognition-based attendance system designed 
 
 The system is designed to work with custom face datasets collected from the institution. It processes facial images and extracts unique facial features for recognition.
 
-#### Theory
+## Theory
 
-## Facial Feature Extraction
+#### Facial Feature Extraction
 
 Facial recognition relies on deep learning-based feature extraction to ensure accurate identification. The process involves:
 	1.	Face Detection
@@ -20,7 +20,7 @@ Facial recognition relies on deep learning-based feature extraction to ensure ac
 	3.	Face Matching
 	•	Compare new images with stored embeddings using Euclidean distance-based matching.
 
-## Face Recognition Model
+#### Face Recognition Model
 
 The system employs a pre-trained deep learning model for facial recognition. It follows these steps:
 	1.	Train on labeled facial images to create unique feature encodings.
@@ -29,7 +29,7 @@ The system employs a pre-trained deep learning model for facial recognition. It 
 
 The model is optimized to handle variations in lighting, angles, and facial expressions.
 
-## Workflow Graph
+#### Workflow Graph
 
 1️⃣ Image Capture  →  2️⃣ Face Detection  →  3️⃣ Feature Extraction  
     →  4️⃣ Face Recognition  →  5️⃣ Attendance Logging  
